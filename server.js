@@ -2,11 +2,13 @@ const express = require("express");
 const dotenv = require("dotenv");
 const colors = require("colors");
 const morgan = require("morgan");
-const connectDB = require("./config/db");
+const knex = require("./config/db");
+const { Model } = require('objection');
+
+Model.knex(knex);
 
 dotenv.config({ path: "./config/config.env" });
 
-connectDB();
 
 const transaction = require("./routes/transactions");
 

@@ -2,7 +2,7 @@ const Transaction = require('../models/Transaction')
 
 exports.getTransactions = async (req,res, next)=>{
    try{
-        const transactions = await Transaction.find();
+        const transactions = await Transaction.query();
 
         return res.status(200).json({
            success: true,
@@ -22,12 +22,13 @@ exports.addTransactions = async (req,res, next)=>{
   try {
     const { text, amount } = req.body;
 
-    const transaction = await Transaction.create(req.body);
+    const transaction = await Transaction.query().insertAndFetch(req.body);
     return res.status(201).json({
         success:true,
         data: transaction
     });
   } catch (err) {
+      console.log(err)
      if(err.name === 'ValidationError'){
          const messages = Object.values(err.errors).map(val => val.message);
          return res.status(400).json({
@@ -46,7 +47,9 @@ exports.addTransactions = async (req,res, next)=>{
 
 exports.deleteTransactions = async (req,res, next)=>{
     try {
-        const transaction = await Transaction.findById(req.params.id);
+        const {id} = req.params
+        console.log(id)
+        const transaction = await Transaction.query().findById(id);
 
         if(!transaction){
             return res.status(404).json({
@@ -54,7 +57,7 @@ exports.deleteTransactions = async (req,res, next)=>{
                 error:'No transaction found'
             });
         }
-        await transaction.remove();
+        await Transaction.query().deleteById(id);
         return res.status(200).json({
             success:true,
             data: {}

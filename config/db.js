@@ -1,17 +1,13 @@
-const mongoose = require('mongoose');
-
-const connectDB = async () => {
-    try{
-        const conn = await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-
-        console.log(`MongoDB Connected: ${conn.connection.host}` .cyan.underline.bold);
-    } catch (err) {
-        console.log(`error: ${err.message}`.red);
-        process.exit(1);
-    }
-}
-
-module.exports = connectDB;
+const {knexSnakeCaseMappers} = require('objection')
+const knex = require("knex")({
+  client: "mysql2",
+  connection: {
+    host: "127.0.0.1",
+    port: 3306,
+    user: "root",
+    password: "password",
+    database: "expense_tracker",
+  },
+  ...knexSnakeCaseMappers(),
+});
+module.exports=knex
